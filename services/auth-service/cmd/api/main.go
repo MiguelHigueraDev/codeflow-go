@@ -1,13 +1,13 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/miguelhigueradev/codeflow/services/auth-service/internal/db"
+	"github.com/miguelhigueradev/codeflow/services/auth-service/internal/store"
 )
 
 type Config struct {
@@ -59,14 +59,25 @@ func main() {
 	// Load configuration
 	cfg := loadConfig()
 
-	// Create database pool
-	pool, err := db.NewPool(context.Background(), cfg.DatabaseURL)
+	// Create database
+	gdb, err := db.Open(cfg.DatabaseURL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer pool.Close()
+
+	sqlDb, err := gdb.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer sqlDb.Close()
+
+	if err := db.Migrate(gdb); err != nil {
+		log.Fatal(err)
+	}
 
 	// Store
+	s := store.New(gdb)
+	_ = s
 
 	// Server
 	server := &http.Server{

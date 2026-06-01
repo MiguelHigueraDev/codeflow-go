@@ -1,15 +1,21 @@
 package db
 
 import (
-	"context"
-
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/miguelhigueradev/codeflow/services/auth-service/internal/db/models"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
-func NewPool(ctx context.Context, databaseURL string) (*pgxpool.Pool, error) {
-	pool, err := pgxpool.New(ctx, databaseURL)
-	if err != nil {
-		return nil, err
-	}
-	return pool, nil
+func Open(databaseURL string) (*gorm.DB, error) {
+	return gorm.Open(postgres.Open(databaseURL), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+}
+
+func Migrate(db *gorm.DB) error {
+	return db.AutoMigrate(
+		&models.User{},
+		&models.Session{},
+	)
 }
