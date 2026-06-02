@@ -7,6 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/miguelhigueradev/codeflow/services/auth-service/internal/db"
+	"github.com/miguelhigueradev/codeflow/services/auth-service/internal/handlers"
 	"github.com/miguelhigueradev/codeflow/services/auth-service/internal/store"
 )
 
@@ -79,9 +80,17 @@ func main() {
 	s := store.New(gdb)
 	_ = s
 
+	// Handler
+
+	h := handlers.New(s, handlers.Config{
+		GitHubClientID:     cfg.GitHubClientID,
+		GitHubClientSecret: cfg.GitHubClientSecret,
+	})
+
 	// Server
 	server := &http.Server{
-		Addr: ":8080",
+		Addr:    ":8080",
+		Handler: h.Routes(),
 	}
 
 	log.Println("server running on port 8080")

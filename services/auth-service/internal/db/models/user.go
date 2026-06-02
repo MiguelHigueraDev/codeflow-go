@@ -10,7 +10,7 @@ type User struct {
 	ID uuid.UUID `gorm:"type:uuid;primaryKey"`
 
 	// GitHub OAuth data
-	GithubID  int64  `gorm:"uniqueIndex;not null"`
+	GitHubID  int64  `gorm:"uniqueIndex;not null"`
 	Username  string `gorm:"not null"`
 	Email     *string
 	AvatarURL *string

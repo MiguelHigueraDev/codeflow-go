@@ -19,8 +19,8 @@ func (s *Store) CreateUser(ctx context.Context, user *models.User) error {
 	return s.db.WithContext(ctx).Create(user).Error
 }
 
-func (s *Store) FindUserByGithubID(ctx context.Context, githubID int64) (models.User, error) {
+func (s *Store) FindUserByGitHubID(ctx context.Context, gitHubID int64) (models.User, error) {
 	var user models.User
-	err := s.db.WithContext(ctx).Where("github_id = ?", githubID).First(&user).Error
+	err := s.db.WithContext(ctx).Where("github_id = ?", gitHubID).First(&user).Error
 	return user, err
 }
